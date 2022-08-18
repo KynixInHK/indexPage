@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  base: './',
   server: {
     host: '0.0.0.0',
     port: 5173,
@@ -12,11 +13,6 @@ export default defineConfig({
         target: 'https://f.m.suning.com/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/time/, '')
-      },
-      '/loc': {
-        target: 'https://apis.map.qq.com/',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/loc/, '')
       },
       '/weather': {
         target: 'https://geoapi.qweather.com/',

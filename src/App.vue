@@ -2,6 +2,7 @@
   // 导包
   import { ref, reactive, onMounted } from 'vue'
   import { getCurrentInstance } from 'vue'
+  import getCurrentCityName from './utils/getUserLocation'
 
   // 系统变量
   const { proxy } = getCurrentInstance()
@@ -22,9 +23,9 @@
     city: ''
   })
   let engines = reactive([
-    { engine: 'google', img: '/src/assets/google.png', backgc: '' },
-    { engine: 'baidu', img: '/src/assets/baidu.png', backgc: '' },
-    { engine: 'bing', img: '/src/assets/bing.png', backgc: '' }
+    { engine: 'google', img: '/google.png', backgc: '' },
+    { engine: 'baidu', img: '/baidu.png', backgc: '' },
+    { engine: 'bing', img: '/bing.png', backgc: '' }
   ])
   let suggestions = ref([])
   let value = ref('')
@@ -33,15 +34,15 @@
   let selIndex = ref(-1)
   let noHide = ref(false)
   let apps = reactive([
-    { id: 1, name: 'Kynix', href: 'https://www.kynix.cc/', icon: '/src/assets/apps/finder.png' },
-    { id: 2, name: 'bilibili', href: 'https://www.bilibili.com/', icon: '/src/assets/apps/bilibili.png' },
-    { id: 3, name: 'icourse', href: 'https://www.icourse163.org/', icon: '/src/assets/apps/mooc.png' },
-    { id: 4, name: 'netdisk', href: 'https://pan.baidu.com/', icon: '/src/assets/apps/pan.png' },
-    { id: 5, name: 'SDUUS', href: 'https://www.bkjx.sdu.edu.cn/', icon: '/src/assets/apps/sduus.png' },
-    { id: 6, name: 'JD', href: 'https://www.jd.com/', icon: '/src/assets/apps/jd.png' },
-    { id: 7, name: 'Google Translation', href: 'https://translate.google.com/', icon: '/src/assets/apps/trans.png' },
-    { id: 8, name: 'CSDN', href: 'https://blog.csdn.net/', icon: '/src/assets/apps/csdn.png' },
-    { id: 9, name: 'GitHub', href: 'https://github.com/', icon: '/src/assets/apps/github.png' }
+    { id: 1, name: 'Kynix', href: 'https://www.kynix.cc/', icon: '/apps/finder.png' },
+    { id: 2, name: 'bilibili', href: 'https://www.bilibili.com/', icon: '/apps/bilibili.png' },
+    { id: 3, name: 'icourse', href: 'https://www.icourse163.org/', icon: '/apps/mooc.png' },
+    { id: 4, name: 'netdisk', href: 'https://pan.baidu.com/', icon: '/apps/pan.png' },
+    { id: 5, name: 'SDUUS', href: 'https://www.bkjx.sdu.edu.cn/', icon: '/apps/sduus.png' },
+    { id: 6, name: 'JD', href: 'https://www.jd.com/', icon: '/apps/jd.png' },
+    { id: 7, name: 'Google Translation', href: 'https://translate.google.com/', icon: '/apps/trans.png' },
+    { id: 8, name: 'CSDN', href: 'https://blog.csdn.net/', icon: '/apps/csdn.png' },
+    { id: 9, name: 'GitHub', href: 'https://github.com/', icon: '/apps/github.png' }
   ])
   let selApp = ref(-1)
   let noHideApps = ref(false)
@@ -269,7 +270,7 @@
       if(hour >= 19 || hour < 7) { // 暗色系
         time.value = 'night'
         bgc.value = '#140a2d'
-        sunMoon.value = '/src/assets/moon.png'
+        sunMoon.value = '/moon.png'
         color.value = '#9288ab'
         color_box.value = '#281e41'
         color_sel.value = '#ececec'
@@ -284,7 +285,7 @@
       } else { // 亮色系
         time.value = 'day'
         bgc.value = '#fdffbf'
-        sunMoon.value = '/src/assets/sun.png'
+        sunMoon.value = '/sun.png'
         color.value = '#000'
         color_box.value = '#fff'
         color_sel.value = '#ececec'
@@ -311,11 +312,16 @@
       console.log(err)
     })
 
+    getCurrentCityName()
+    .then((city) => {
+      console.log(city);  //顺利的话能在控制台打印出当前城市
+    })
+
     // 获取天气
     /* 通过IP获取location */
-    proxy.$http.get('/loc/ws/location/v1/ip?key=WV7BZ-RY66X-GDH4K-T653N-QR64F-S4BL4')
+    getCurrentCityName()
     .then((res) => {
-      let location = res.data.result.ad_info.city
+      let location = res
       weather.city = location
       /* 通过location获取locationID */
       proxy.$http.get('/weather/v2/city/lookup?key=19deeb7ee6e84dfaa8581df334b96328&location=' + location)
@@ -324,7 +330,7 @@
         /* 通过locationID获取weather */
         proxy.$http.get('/wea/v7/weather/now?key=19deeb7ee6e84dfaa8581df334b96328&location=' + locationID)
         .then((res) => {
-          weather.icon = '/src/assets/weather/' + res.data.now.icon + '.svg'
+          weather.icon = '/' + res.data.now.icon + '.svg'
           weather.weather = res.data.now.text
           weather.temperature = res.data.now.temp + ' ℃'
         })
@@ -349,7 +355,7 @@
       <img :src="sunMoon" class="sunMoon">
     </div>
     <div class="location">
-      <img src="./assets/location.svg" :style="{ filter: 'drop-shadow(' + color + ' -100rem 0)' }">
+      <img src="/location.svg" :style="{ filter: 'drop-shadow(' + color + ' -100rem 0)' }">
       <div class="city">{{weather.city}}</div>
     </div>
     <div class="weather">
@@ -360,7 +366,7 @@
       </div>
     </div>
     <div class="hello">{{hello}}</div>
-    <img src="./assets/automn.png" class="automn">
+    <img src="/automn.png" class="automn">
     <div class="selectEngine">
       <img :src="item.img" class="engine" v-for="(item, index) in engines" :style="{ backgroundColor: item.backgc }" @click="setBgc" @dblclick="goToWebSite" :data-name="item.engine" :id="index" :data-id="index">
     </div>
@@ -386,7 +392,7 @@
 <style>
 
   /* 导入字体 */
-  @import './assets/fonts/font.css';
+  @import '/fonts/font.css';
   * {
     margin: 0;
     padding: 0;

@@ -1,0 +1,20 @@
+@font-face {
+    font-family: 'jianzhi';
+    src: url('./jianzhi.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'jiansong';
+    src: url('./jiansong.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'heiti';
+    src: url('./heiti.TTF');
+    font-weight: normal;
+    font-style: normal;
+}
